@@ -1,0 +1,59 @@
+apiVersion: verification.kubestash.com/v1alpha1
+kind: BackupVerifier
+metadata:
+  name: query-verifier
+  namespace: demo
+sepc:
+  function: kubedb-verifier
+  usagePolicy:
+    allowedNamespaces:
+      from: All
+  verificationType: Query
+  query:
+    statement: {QUERY}
+    # expectedOuput: ""
+---
+apiVersion: verification.kubestash.com/v1alpha1
+kind: BackupVerifier
+metadata:
+  name: restore-verifier
+  namespace: demo
+sepc:
+  function: kubedb-verifier
+  usagePolicy:
+    allowedNamespaces:
+      from: All
+  verificationType: RestoreOnly
+---
+apiVersion: verification.kubestash.com/v1alpha1
+kind: BackupVerifier
+metadata:
+  name: file-verifier
+  namespace: demo
+sepc:
+  function: workload-verifier
+  usagePolicy:  
+    allowedNamespaces:
+      from: All
+  verificationType: File
+  file:
+    paths  : 
+    - /backups/file1.txt
+    - /backups/file2.txt
+---
+apiVersion: verification.kubestash.com/v1alpha1
+kind: BackupVerifier
+metadata:
+  name: script-verifier
+  namespace: demo
+sepc:
+  function: kubedb-verifier
+  usagePolicy:
+    allowedNamespaces:
+      from: All
+  verificationType: Script
+  script: 
+    location: /kubestash/verify_backup.sh  
+    args:  # Optional arguments to pass to the script
+    - "--args-1"
+    - "--args-2"

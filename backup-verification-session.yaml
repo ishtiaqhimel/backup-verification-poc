@@ -1,0 +1,27 @@
+apiVersion: verification.kubestash.com/v1alpha1
+kind: BackupVerificationSession
+metadata:
+  name: sample-backup-verification-session
+  namespace: demo
+sepc:
+  backupVerifier: query-verifier
+  session: demo-session
+  repository:  gcs-demo-repo
+  snapshot: gcs-demo-repo-sample-backup-sts-demo-session-1702543201
+status:
+  conditions:
+  - lastTransitionTime: "2023-12-14T08:40:33Z"
+    reason: Backup verified successfully.
+    status: "True"
+    type: BackupVerified
+  - lastTransitionTime: "2023-12-14T08:40:01Z"
+    message: Verification Executor has been ensured successfully.
+    reason: SuccessfullyEnsuredVerificationExecutor
+    status: "True"
+    type: VerificationExecutorEnsured
+  - lastTransitionTime: "2023-12-14T08:40:33Z"
+    reason: SuccessfullyCleanedSessionHistory
+    status: "True"
+    type: SessionHistoryCleaned
+  phase: Running # (Succeeded/Failed)
+  duration: 3m
