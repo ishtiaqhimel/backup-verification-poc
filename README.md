@@ -22,10 +22,22 @@ No backup is backup until you can successfully restore your application from it.
 ## Q/A
 
 - Will trigger verification after every few backups / cron schedule? -> Cron schedule
-- How to run verification? -> By a verifier job 
+- How to run verification? -> By a verifier job 
 - Who will trigger the verification job? -> A cronjob will create `BackupVerificationSession`
 - Should we only verify the latest Snapshot or user should be able to specify to verify last X snapshots? -> Latest
 - What if verification fails? Should we stop taking any further backup? -> We will not stop backup (as the verification may go wrong), we will notify user somehow about failed backup verification.
 - Should a Snapshot have a field that denotes that this Snapshot has been verified? -> Maybe
-- Who will trigger the verification? -> BackupConfig will create cronjob 
+- Who will trigger the verification? -> BackupConfig will create cronjob 
 - Should we have a different process to verify workload backup?
+
+## Meeting 06.05.2024
+
+Step-1: Restore the application and data or only data (depending on backup) <br>
+Step-2: After restore need some standard checks (may provide query) <br>
+Step-3: User specific bash script <br>
+Step-4: Restore complex application via helm chart (provided by user) </br>
+
+Q: What to do if verification fail? <br>
+A: Keep taking backup (as verification may go wrong). Notify user via slack or any other way. <br>
+Q: Should we keep the instances for some manual checking? <br>
+A: Yes, we can. Keep them user defined time then remove them.
