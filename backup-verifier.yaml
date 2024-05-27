@@ -1,3 +1,6 @@
+# `Query` type verification should be used in case of database backup verfication.
+# Run a query, and check if the output matches with expected output.
+
 apiVersion: verification.kubestash.com/v1alpha1
 kind: BackupVerifier
 metadata:
@@ -5,14 +8,17 @@ metadata:
   namespace: demo
 sepc:
   function: kubedb-verifier
+  keepAlive: 1h30m
   usagePolicy:
     allowedNamespaces:
       from: All
   verificationType: Query
   query:
-    statement: {QUERY}
+    statement: {QUERY} # SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'your_database_name' AND table_name = 'your_table_name' -> 1 if exists otherwise 0.
     # expectedOuput: ""
+
 ---
+
 apiVersion: verification.kubestash.com/v1alpha1
 kind: BackupVerifier
 metadata:
@@ -20,27 +26,61 @@ metadata:
   namespace: demo
 sepc:
   function: kubedb-verifier
+  keepAlive: 45m
   usagePolicy:
     allowedNamespaces:
       from: All
   verificationType: RestoreOnly
+  restoreOnly:
+
+
 ---
+
+# `File` type verifier should be used in case of workload backup verification.
+# If user don't have `manifest` component in the snapshot then he/she must provide VolumeClaimTemplate where the data should be restored for verification.
+# Otherwise skip this field.
+# User should provide paths to check if they exists for verification. If this field is empty then no checking will be done.
+
 apiVersion: verification.kubestash.com/v1alpha1
 kind: BackupVerifier
 metadata:
   name: file-verifier
   namespace: demo
 sepc:
-  function: workload-verifier
+  namespace: verify # provide this namespace where the verification components will be created
+  function: workload-verify
+  keepAlive: 0s # default value
   usagePolicy:  
     allowedNamespaces:
       from: All
+  components: # components that should be verified, keep it empty to verify all components
+  - dump-pod-0
+  - dump-pod-2
+  params:
+  - name: testing
+    usage: This is a test param
+    required: false
+  targetVolumes:
+    volumeMounts:
+    - name: sample-data
+      mountPath: /source/data
+    volumeClaimTemplates:
+      - metadata:
+          name: sample-data-${POD_ORDINAL} # In Resolver func Need to Create PVC by this Name.
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          storageClassName: "standard"
+          resources:
+            requests:
+              storage: 1Gi
   verificationType: File
   file:
-    paths  : 
-    - /backups/file1.txt
+    paths: 
+    - /backups/file1.txt # From which PVC ??? 
     - /backups/file2.txt
+
 ---
+
 apiVersion: verification.kubestash.com/v1alpha1
 kind: BackupVerifier
 metadata:

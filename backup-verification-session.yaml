@@ -8,6 +8,7 @@ sepc:
   session: demo-session
   repository:  gcs-demo-repo
   snapshot: gcs-demo-repo-sample-backup-sts-demo-session-1702543201
+  retryLeft: 2
 status:
   conditions:
   - lastTransitionTime: "2023-12-14T08:40:33Z"

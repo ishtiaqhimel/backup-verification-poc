@@ -1,0 +1,11 @@
+apiVersion: addons.kubestash.com/v1alpha1
+kind: Function
+metadata:
+  name: workload-verify
+spec:
+  args:
+  - verify
+  - --namespace=${namespace:=default}
+  - --snapshot=${snapshot:=}
+  - --verifier=${verifier:=}
+  image: <image-for-workload-verify>
